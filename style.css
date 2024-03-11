@@ -1,0 +1,33 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #ADB2FF;
+}
+
+h1{
+    text-align: center;
+}
+
+div{
+    /* display: flex; */
+}
+
+h1{
+    color: #4F5280;
+}
+
+input{
+    border-radius: 50px;
+    font-size: 30px;
+    text-align: center;
+    background-color: #FFFFAD;
+    padding: 10px;
+}
+
+#content{
+    height: 100vh;
+    display: flex;
+    justify-content: space-evenly;
+    /* align-items: center; */
+}
+
