@@ -1,0 +1,51 @@
+body{
+    margin: 0;
+    padding: 0;
+    /* background-color: aqua; */
+}
+
+#addObject{
+    position: fixed;
+    bottom: 20px;
+    right: 10px;
+    background-color: beige;
+    width: 4vh;
+    height: 4vh;
+}
+
+canvas{
+    z-index: -1;
+}
+
+#divModal{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    /* opacity: 0.2; */
+}
+
+#bodyModal{
+    padding: 3%;
+    position: fixed;
+    width: 40%;
+    z-index: 2;
+    left: 30%;
+    top: 20%;
+    text-align: center;
+    background-color: white;
+    opacity: 1;
+    /* color: ; */
+    border-radius: 30px;
+}
+
+button{
+    width: 40%;
+    margin: 5%;
+    border-radius: 20px;
+    padding: 5px;
+    border: 1px;
+    /* background-color: aqua; */
+}
