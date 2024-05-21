@@ -38,23 +38,16 @@ $(document).ready(() =>{
     if(axes){
         const axesHelper = new THREE.AxesHelper();
         axesHelper.scale.setLength(100);
-        // console.log(axesHelper);
         scene.add(axesHelper);
     }
 
     //Agregar un cubo 
-    // const geometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // const cube = new THREE.Mesh(geometry, material);
-    // scene.add(cube);
-
-    // const axesHelper = new THREE.AxesHelper(5);
-    // scene.add(axesHelper);
-
-    //Plano
-    // const plane = new THREE.Plane(new THREE.Vector3(1,0,0),3);
-    // const helper = new THREE.PlaneHelper(plane,1,0xffff00);
-    // scene.add(helper)
+    const pivot = new THREE.Group();
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshNormalMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    pivot.add(cube)
+    scene.add(pivot);
 
     //Agregar objetos
     $("#addObject").click(function () {
@@ -116,7 +109,6 @@ $(document).ready(() =>{
 
         //Interfaz para agregar un cubo
         $("#buttonCubo").click(function(){
-            // console.log("Agrega cubo");
             //Inputs para los datos del cubo a agregar
             let pTamano = $("<p>");
             pTamano.text("Introduce el tamaño del cubo:")
@@ -138,7 +130,6 @@ $(document).ready(() =>{
             $("#buttonAddCubo").click(function(){
                 //Obtiene el tamano del cubo del input
                 let tamanoCubo = $("#inputTamano").val();
-                // console.log(tamanoCubo);
 
                 //Elimina el modal
                 $("#divModal").empty();
@@ -334,10 +325,10 @@ $(document).ready(() =>{
         // console.log(pointer);
 
         raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(scene.children);
+        const intersects = raycaster.intersectObjects(scene.children, true);
         // console.log("unfor");
         intersects.some(function (element){
-            console.log(element);
+            // console.log(element);
             if (element.object.isMesh) {
                 // console.log("a")
                 //Modal Seleccionar transformacion
@@ -390,58 +381,74 @@ $(document).ready(() =>{
 
 
                 $("#buttonRotacion").click(function () {
-
+                    
                     let pTamano = $("<h3>");
                     pTamano.text("Rotacion de poliedro");
-
+                    $("#contentModal").append(pTamano);
+                    
                     let pEje = $("<p>");
                     pEje.text("¿que eje  quieres rotar?");
+                    $("#contentModal").append(pEje);
                     let inputEjeX = $("<input>")
                     inputEjeX.attr("type", "radio");
                     inputEjeX.attr("id", "inputEje");
                     inputEjeX.attr("name", "inputEje");
                     inputEjeX.attr("checked", "true");
                     inputEjeX.val("X");
-
+                    $("#contentModal").append(inputEjeX);
+                    $("#contentModal").append("X");
+                    
                     let inputEjeY = $("<input>")
                     inputEjeY.attr("type", "radio");
                     inputEjeY.attr("id", "inputEje");
                     inputEjeY.attr("name", "inputEje");
                     inputEjeY.val("Y");
-
+                    $("#contentModal").append(inputEjeY);
+                    $("#contentModal").append("Y");
+                    
                     let inputEjeZ = $("<input>")
                     inputEjeZ.attr("type", "radio");
                     inputEjeZ.attr("id", "inputEje");
                     inputEjeZ.attr("name", "inputEje");
                     inputEjeZ.val("Z");
-
-
+                    $("#contentModal").append(inputEjeZ);
+                    $("#contentModal").append("Z");
+                    $("#contentModal").append("<br>");
+                    
                     let pGrados = $("<p>");
                     pGrados.text("Introduzca los grados a rotar");
+                    $("#contentModal").append(pGrados);
+                    $("#contentModal").append(pGrados);
                     let inputGrados = $("<input>")
                     inputGrados.attr("type", "number");
                     inputGrados.attr("id", "inputGrados");
                     inputGrados.val(90);
+                    $("#contentModal").append(inputGrados);
+                    $("#contentModal").append("<br>");
 
+                    let pPivote = $("<p>");
+                    pPivote.text("Seleccione el punto pivote");
+                    $("#contentModal").append(pPivote);
+                    // console.log(element.object.geometry.vertices);
+                    let indexV = 0;
+                    element.object.geometry.vertices.forEach(vertice => {
+                        console.log(vertice);
+                        let opcionVertice = $("<input>");
+                        opcionVertice.attr("type","radio");
+                        opcionVertice.attr("name","verticePivote");
+                        opcionVertice.val(indexV);
+                        indexV++;
+                        $("#contentModal").append(opcionVertice);
+                        $("#contentModal").append(" X: " + vertice.x + " Y: " + vertice.y + " Z: " + vertice.z);
+                        $("#contentModal").append("<br>");
+                    });
+                    
                     let buttonRotar = $("<button>");
                     buttonRotar.attr("type", "button");
                     buttonRotar.attr("id", "buttonRotate");
                     buttonRotar.text("Rotar");
-
-                    $("#contentModal").append(pGrados);
-                    $("#contentModal").append(pTamano);
-                    $("#contentModal").append(pEje);
-                    $("#contentModal").append(inputEjeX);
-                    $("#contentModal").append("X");
-                    $("#contentModal").append(inputEjeY);
-                    $("#contentModal").append("Y");
-                    $("#contentModal").append(inputEjeZ);
-                    $("#contentModal").append("Z");
-                    $("#contentModal").append("<br>");
-                    $("#contentModal").append(pGrados);
-                    $("#contentModal").append(inputGrados);
-                    $("#contentModal").append("<br>");
                     $("#contentModal").append(buttonRotar);
+                    
 
                     $("#buttonRotate").click(function () {
                         //Obtiene los datos de la rotacion
@@ -450,7 +457,10 @@ $(document).ready(() =>{
                         let rotX = 0;
                         let rotY = 0;
                         let rotZ = 0;
-                        switch(eje){
+                        let pivote = element.object.geometry.vertices[parseInt($("input[name='verticePivote']:checked").val())];
+                        console.log();
+
+                        switch (eje) {
                             case "X":
                                 rotX = degRotar;
                                 break;
@@ -461,8 +471,10 @@ $(document).ready(() =>{
                                 rotZ = degRotar;
                                 break;
                         }
-                        element.object.rotation.set(rotX,rotY,rotZ);
-                        console.log(rotX)
+                        
+                        element.object.position.set(pivote.x, pivote.y, pivote.z);
+                        element.object.parent.rotation.set(rotX,rotY,rotZ);
+                        // element.object.position.set(0, 0, 0);
 
                         //Eliminar modal
                         $("#divModal").empty();
@@ -473,43 +485,43 @@ $(document).ready(() =>{
                 $("#buttonTraslacion").click(function () {
                     let h3Traslacion = $("<h3>");
                     h3Traslacion.text("Traslacion");
+                    $("#contentModal").append(h3Traslacion);
 
                     let pCoordenadas = $("<p>");
                     pCoordenadas.text("Introduzca el vector al que se trasladara");
+                    $("#contentModal").append(pCoordenadas);
 
                     let inputCoordsX = $("<input>");
                     inputCoordsX.attr("id", "coordX");
                     inputCoordsX.attr("type", "number");
                     inputCoordsX.attr("placeholder", "X");
                     inputCoordsX.val(9);
+                    $("#contentModal").append(inputCoordsX);
 
                     let inputCoordsY = $("<input>");
                     inputCoordsY.attr("id", "coordY");
                     inputCoordsY.attr("type", "number");
                     inputCoordsY.attr("placeholder", "Y");
                     inputCoordsY.val(9);
+                    $("#contentModal").append(inputCoordsY);
 
                     let inputCoordsZ = $("<input>");
                     inputCoordsZ.attr("id", "coordZ");
                     inputCoordsZ.attr("type", "number");
                     inputCoordsZ.attr("placeholder", "Z");
                     inputCoordsZ.val(9);
+                    $("#contentModal").append(inputCoordsZ);
+                    $("#contentModal").append("<br>");
 
                     let buttonTrasladar = $("<button>");
                     buttonTrasladar.attr("id", "buttonTrasladar");
                     buttonTrasladar.attr("type", "button");
                     buttonTrasladar.text("Trasladar")
-
-                    $("#contentModal").append(h3Traslacion);
-                    $("#contentModal").append(pCoordenadas);
-                    $("#contentModal").append(inputCoordsX);
-                    $("#contentModal").append(inputCoordsY);
-                    $("#contentModal").append(inputCoordsZ);
-                    $("#contentModal").append("<br>");
                     $("#contentModal").append(buttonTrasladar);
+                    
 
                     $("#buttonTrasladar").click(function () {
-                        console.log(element.object.position.x);
+                        // console.log(element.object.position.x);
                         let X = parseInt(element.object.position.x);
                         let Y = parseInt(element.object.position.y);
                         let Z = parseInt(element.object.position.z);
